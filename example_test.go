@@ -3,10 +3,10 @@ package htmldiff_test
 import (
 	"fmt"
 
-	"github.com/documize/html-diff"
+	htmldiff "github.com/davidgraymi/html-diff"
 )
 
-func ExampleHTMLdiff() {
+func ExampleConfig_HTMLdiff() {
 	previousHTML := `<p>Bullet list:</p><ul><li>first item</li><li>第二</li><li>3rd</li></ul>`
 	latestHTML := `<p>Bullet <b>list:</b></p><ul><li>first item</li><li>number two</li><li>3rd</li></ul>`
 	var cfg = &htmldiff.Config{
