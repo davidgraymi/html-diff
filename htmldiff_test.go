@@ -2,14 +2,14 @@ package htmldiff_test
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
 	"time"
 
-	"github.com/documize/html-diff"
+	htmldiff "github.com/davidgraymi/html-diff"
 )
 
 var cfg = &htmldiff.Config{
@@ -284,8 +284,19 @@ func TestSimple(t *testing.T) {
 		}
 		for d := range st.diffs {
 			if d < len(res) {
-				fn := fmt.Sprintf("testout/simple%d-%d.html", s, d)
-				err := ioutil.WriteFile(fn, []byte(res[d]), 0777)
+				dn := "testout"
+				fn := fmt.Sprintf("simple%d-%d.html", s, d)
+				fufn := filepath.Join(dn, fn)
+
+				// Check if the directory exists, create if not
+				if _, err := os.Stat(dn); os.IsNotExist(err) {
+					err := os.MkdirAll(dn, 0777)
+					if err != nil {
+						panic(err)
+					}
+				}
+
+				err := os.WriteFile(fufn, []byte(res[d]), 0777)
 				if err != nil {
 					t.Error(err)
 				}
@@ -293,7 +304,7 @@ func TestSimple(t *testing.T) {
 					if len(res[d]) < 1024 {
 						t.Errorf("Simple test %d diff %d wanted: `%s` got: `%s`", s, d, st.diffs[d], res[d])
 					} else {
-						t.Errorf("Simple test %d diff %d failed see file: `%s`", s, d, fn)
+						t.Errorf("Simple test %d diff %d failed see file: `%s`", s, d, fufn)
 					}
 				}
 			}
@@ -304,7 +315,7 @@ func TestSimple(t *testing.T) {
 
 func TestTimeoutAndMemory(t *testing.T) {
 	dir := "." + string(os.PathSeparator) + "testin"
-	files, err := ioutil.ReadDir(dir)
+	files, err := os.ReadDir(dir)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -315,7 +326,7 @@ func TestTimeoutAndMemory(t *testing.T) {
 		fn := file.Name()
 		if strings.HasSuffix(fn, ".html") {
 			ffn := dir + string(os.PathSeparator) + fn
-			dat, err := ioutil.ReadFile(ffn)
+			dat, err := os.ReadFile(ffn)
 			if err != nil {
 				t.Fatal(err)
 			}

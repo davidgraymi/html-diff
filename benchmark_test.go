@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/documize/html-diff"
+	htmldiff "github.com/davidgraymi/html-diff"
 )
 
 var cfgBench = &htmldiff.Config{
